@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SingglebeeApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+925be51aac2e31a2faac9d73514e9291ffbb46be")]
 [assembly: System.Reflection.AssemblyProductAttribute("SingglebeeApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SingglebeeApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

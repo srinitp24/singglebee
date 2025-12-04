@@ -138,3 +138,4 @@ D:\python_learning\singglebee\singglebee\singglebee-rewrite\backend\SingglebeeAp
 D:\python_learning\singglebee\singglebee\singglebee-rewrite\backend\SingglebeeApi\obj\Debug\net9.0\SingglebeeApi.pdb
 D:\python_learning\singglebee\singglebee\singglebee-rewrite\backend\SingglebeeApi\obj\Debug\net9.0\SingglebeeApi.genruntimeconfig.cache
 D:\python_learning\singglebee\singglebee\singglebee-rewrite\backend\SingglebeeApi\obj\Debug\net9.0\ref\SingglebeeApi.dll
+D:\python_learning\singglebee\singglebee\singglebee-rewrite\backend\SingglebeeApi\obj\Debug\net9.0\SingglebeeApi.sourcelink.json
