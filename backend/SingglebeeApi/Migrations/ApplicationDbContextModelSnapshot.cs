@@ -400,6 +400,75 @@ namespace SingglebeeApi.Migrations
                     b.ToTable("order_payments", (string)null);
                 });
 
+            modelBuilder.Entity("SingglebeeApi.Models.OtpVerification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id");
+
+                    b.Property<int>("AttemptCount")
+                        .HasColumnType("int")
+                        .HasColumnName("attempt_count");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("expires_at");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("ip_address");
+
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_verified");
+
+                    b.Property<string>("OtpCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)")
+                        .HasColumnName("otp_code");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("phone_number");
+
+                    b.Property<string>("Purpose")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("purpose");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("user_id");
+
+                    b.Property<DateTime?>("VerifiedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("verified_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("PhoneNumber");
+
+                    b.HasIndex("Purpose");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("PhoneNumber", "Purpose", "IsVerified");
+
+                    b.ToTable("otp_verifications", (string)null);
+                });
+
             modelBuilder.Entity("SingglebeeApi.Models.PasswordResetToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -562,6 +631,9 @@ namespace SingglebeeApi.Migrations
                         .HasColumnType("text")
                         .HasColumnName("description");
 
+                    b.Property<int>("DiscountPercentage")
+                        .HasColumnType("int");
+
                     b.Property<string>("ImageUrl")
                         .HasColumnType("text")
                         .HasColumnName("image_url");
@@ -619,6 +691,69 @@ namespace SingglebeeApi.Migrations
                     b.ToTable("products", (string)null);
                 });
 
+            modelBuilder.Entity("SingglebeeApi.Models.ProductReview", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<bool>("IsAnonymous")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_anonymous");
+
+                    b.Property<bool>("IsVerifiedPurchase")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_verified_purchase");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("order_id");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("product_id");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int")
+                        .HasColumnName("rating");
+
+                    b.Property<string>("ReviewText")
+                        .HasColumnType("text")
+                        .HasColumnName("review_text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("Rating");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("OrderId", "ProductId")
+                        .IsUnique();
+
+                    b.HasIndex("ProductId", "Rating");
+
+                    b.ToTable("product_reviews", (string)null);
+                });
+
             modelBuilder.Entity("SingglebeeApi.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -672,6 +807,10 @@ namespace SingglebeeApi.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)")
                         .HasColumnName("phone");
+
+                    b.Property<bool>("PhoneVerified")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("phone_verified");
 
                     b.Property<string>("PostalCode")
                         .HasMaxLength(20)
@@ -792,6 +931,17 @@ namespace SingglebeeApi.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("SingglebeeApi.Models.OtpVerification", b =>
+                {
+                    b.HasOne("SingglebeeApi.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("SingglebeeApi.Models.PasswordResetToken", b =>
                 {
                     b.HasOne("SingglebeeApi.Models.User", "User")
@@ -817,6 +967,33 @@ namespace SingglebeeApi.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("OrderPayment");
+                });
+
+            modelBuilder.Entity("SingglebeeApi.Models.ProductReview", b =>
+                {
+                    b.HasOne("SingglebeeApi.Models.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SingglebeeApi.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SingglebeeApi.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SingglebeeApi.Models.Cart", b =>

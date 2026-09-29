@@ -25,10 +25,20 @@ import {
   Th,
   Td,
   TableContainer,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
 } from '@chakra-ui/react'
 import { FiArrowLeft, FiPackage } from 'react-icons/fi'
+import { useState } from 'react'
 import { useAuthStore } from '../store/authStore'
 import { orderService } from '../services/orderService'
+import { reviewService } from '../services/reviewService'
+import ReviewForm from '../components/ReviewForm'
 import type { OrderDto } from '../services/orderService'
 
 const statusColors: Record<string, string> = {
@@ -44,12 +54,38 @@ export default function OrderDetailPage() {
   const { isAuthenticated } = useAuthStore()
   const navigate = useNavigate()
   const toast = useToast()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(null)
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['order', id],
     queryFn: () => orderService.getOrderById(id!),
     enabled: isAuthenticated && !!id,
   })
+
+
+  const { data: canReviewData } = useQuery({
+    queryKey: ['canReview', id],
+    queryFn: () => reviewService.canUserReviewProduct(id!, selectedProductId!),
+    enabled: !!selectedProductId && !!id,
+  })
+
+  const handleReviewClick = (productId: string) => {
+    setSelectedProductId(productId)
+    onOpen()
+  }
+
+  const handleReviewSuccess = () => {
+    toast({
+      title: 'Review submitted',
+      description: 'Thank you for your feedback!',
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    })
+    onClose()
+    setSelectedProductId(null)
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />
@@ -178,6 +214,7 @@ export default function OrderDetailPage() {
                     <Th isNumeric>Price</Th>
                     <Th isNumeric>Quantity</Th>
                     <Th isNumeric>Subtotal</Th>
+                    <Th>Action</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -189,6 +226,18 @@ export default function OrderDetailPage() {
                       <Td isNumeric>{item.quantity}</Td>
                       <Td isNumeric fontWeight="bold">
                         ₹{item.subtotal.toFixed(2)}
+                      </Td>
+                      <Td>
+                        {order.status === 'delivered' && (
+                          <Button
+                            size="sm"
+                            colorScheme="purple"
+                            variant="outline"
+                            onClick={() => handleReviewClick(item.productId)}
+                          >
+                            Write Review
+                          </Button>
+                        )}
                       </Td>
                     </Tr>
                   ))}
@@ -329,6 +378,25 @@ export default function OrderDetailPage() {
           </Card>
         )}
       </VStack>
+
+      {/* Review Modal */}
+      <Modal isOpen={isOpen} onClose={onClose} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Write a Review</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb="6">
+            {selectedProductId && (
+              <ReviewForm
+                productId={selectedProductId}
+                orderId={order.id}
+                productName={order.items.find(item => item.productId === selectedProductId)?.productName || 'Product'}
+                onSuccess={handleReviewSuccess}
+              />
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Container>
   )
 }

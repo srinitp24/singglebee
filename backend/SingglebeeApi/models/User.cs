@@ -45,6 +45,8 @@ namespace SingglebeeApi.Models
 
     public bool IsActive { get; set; } = true;        public bool EmailVerified { get; set; } = false;
 
+        public bool PhoneVerified { get; set; } = false;
+
         [MaxLength(255)]
         public string? ResetToken { get; set; }
 

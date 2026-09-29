@@ -21,6 +21,8 @@ namespace SingglebeeApi.Data
         public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
         public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<OtpVerification> OtpVerifications { get; set; }
+        public DbSet<ProductReview> ProductReviews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -48,6 +50,7 @@ namespace SingglebeeApi.Data
                 entity.Property(e => e.Phone).HasColumnName("phone");
                 entity.Property(e => e.IsActive).HasColumnName("is_active");
                 entity.Property(e => e.EmailVerified).HasColumnName("email_verified");
+                entity.Property(e => e.PhoneVerified).HasColumnName("phone_verified");
                 entity.Property(e => e.ResetToken).HasColumnName("reset_token");
                 entity.Property(e => e.ResetTokenExpires).HasColumnName("reset_token_expires");
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");
@@ -353,6 +356,84 @@ namespace SingglebeeApi.Data
                 entity.Property(e => e.IpAddress).HasColumnName("ip_address");
                 entity.Property(e => e.UserAgent).HasColumnName("user_agent");
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            });
+
+            // ============================================
+            // OTP VERIFICATION CONFIGURATION
+            // ============================================
+            modelBuilder.Entity<OtpVerification>(entity =>
+            {
+                entity.ToTable("otp_verifications");
+
+                entity.HasIndex(e => e.PhoneNumber);
+                entity.HasIndex(e => e.Purpose);
+                entity.HasIndex(e => e.CreatedAt);
+                entity.HasIndex(e => new { e.PhoneNumber, e.Purpose, e.IsVerified });
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("char(36)");
+
+                entity.Property(e => e.UserId).HasColumnName("user_id");
+                entity.Property(e => e.PhoneNumber).HasColumnName("phone_number");
+                entity.Property(e => e.OtpCode).HasColumnName("otp_code");
+                entity.Property(e => e.Purpose).HasColumnName("purpose");
+                entity.Property(e => e.IsVerified).HasColumnName("is_verified");
+                entity.Property(e => e.ExpiresAt).HasColumnName("expires_at");
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+                entity.Property(e => e.VerifiedAt).HasColumnName("verified_at");
+                entity.Property(e => e.AttemptCount).HasColumnName("attempt_count");
+                entity.Property(e => e.IpAddress).HasColumnName("ip_address");
+
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // ============================================
+            // PRODUCT REVIEW CONFIGURATION
+            // ============================================
+            modelBuilder.Entity<ProductReview>(entity =>
+            {
+                entity.ToTable("product_reviews");
+
+                entity.HasIndex(e => e.ProductId);
+                entity.HasIndex(e => e.OrderId);
+                entity.HasIndex(e => e.UserId);
+                entity.HasIndex(e => e.Rating);
+                entity.HasIndex(e => e.CreatedAt);
+                entity.HasIndex(e => new { e.ProductId, e.Rating });
+                entity.HasIndex(e => new { e.OrderId, e.ProductId }).IsUnique(); // One review per product per order
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("char(36)");
+
+                entity.Property(e => e.ProductId).HasColumnName("product_id");
+                entity.Property(e => e.OrderId).HasColumnName("order_id");
+                entity.Property(e => e.UserId).HasColumnName("user_id");
+                entity.Property(e => e.Rating).HasColumnName("rating");
+                entity.Property(e => e.ReviewText).HasColumnName("review_text");
+                entity.Property(e => e.IsAnonymous).HasColumnName("is_anonymous");
+                entity.Property(e => e.IsVerifiedPurchase).HasColumnName("is_verified_purchase");
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+                entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+
+                entity.HasOne(e => e.Product)
+                    .WithMany()
+                    .HasForeignKey(e => e.ProductId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.Order)
+                    .WithMany()
+                    .HasForeignKey(e => e.OrderId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

@@ -8,12 +8,15 @@ export interface Product {
   price: number
   priceCents: number
   currency: string
+  discountPercentage: number
+  discountedPrice?: number
   stock: number
   category?: string
   ageGroup?: string
   language?: string
   imageUrl?: string
   rating: number
+  totalReviews: number
   isActive: boolean
   createdAt: string
   updatedAt: string

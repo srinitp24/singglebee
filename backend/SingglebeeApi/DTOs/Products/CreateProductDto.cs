@@ -22,6 +22,9 @@ namespace SingglebeeApi.DTOs.Products
         [StringLength(3)]
         public string Currency { get; set; } = "INR";
 
+        [Range(0, 100, ErrorMessage = "Discount percentage must be between 0 and 100")]
+        public int DiscountPercentage { get; set; } = 0;
+
         [Required(ErrorMessage = "Stock quantity is required")]
         [Range(0, int.MaxValue, ErrorMessage = "Stock cannot be negative")]
         public int Stock { get; set; }

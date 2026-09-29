@@ -51,6 +51,7 @@ interface ProductFormData {
   sku: string
   description: string
   price: number
+  discountPercentage: number
   stock: number
   category: string
   ageGroup: string
@@ -67,7 +68,6 @@ export default function AdminProducts() {
   const toast = useToast()
   const queryClient = useQueryClient()
   const cancelRef = React.useRef<HTMLButtonElement>(null)
-  const authStore = useAuthStore()
   
   const [editingProduct, setEditingProduct] = useState<any>(null)
   const [deletingProductId, setDeletingProductId] = useState<string | null>(null)
@@ -76,6 +76,7 @@ export default function AdminProducts() {
     sku: '',
     description: '',
     price: 0,
+    discountPercentage: 0,
     stock: 0,
     category: '',
     ageGroup: '',
@@ -165,6 +166,7 @@ export default function AdminProducts() {
       sku: '',
       description: '',
       price: 0,
+      discountPercentage: 0,
       stock: 0,
       category: '',
       ageGroup: '',
@@ -184,6 +186,7 @@ export default function AdminProducts() {
       sku: product.sku,
       description: product.description || '',
       price: product.price,
+      discountPercentage: product.discountPercentage || 0,
       stock: product.stock,
       category: product.category || '',
       ageGroup: product.ageGroup || '',
@@ -207,6 +210,7 @@ export default function AdminProducts() {
       name: formData.name,
       sku: formData.sku,
       price: formData.price,
+      discountPercentage: formData.discountPercentage,
       stock: formData.stock,
       currency: formData.currency,
       rating: formData.rating,
@@ -362,6 +366,18 @@ export default function AdminProducts() {
                     value={formData.price}
                     onChange={(_, value) => setFormData({ ...formData, price: value })}
                     min={0}
+                  >
+                    <NumberInputField />
+                  </NumberInput>
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Discount (%)</FormLabel>
+                  <NumberInput
+                    value={formData.discountPercentage}
+                    onChange={(_, value) => setFormData({ ...formData, discountPercentage: value })}
+                    min={0}
+                    max={100}
                   >
                     <NumberInputField />
                   </NumberInput>

@@ -55,7 +55,7 @@ export default function ProfilePage() {
       const token = localStorage.getItem('token') || ''
       
       // Update auth store with data from backend
-      setAuth(data.data, token)
+      setAuth(data.data)
       
       toast({
         title: 'Profile updated successfully',

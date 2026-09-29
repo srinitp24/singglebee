@@ -34,7 +34,7 @@ export default function RegisterPage() {
   const registerMutation = useMutation({
     mutationFn: authService.register,
     onSuccess: (data) => {
-      setAuth(data.data.user, data.data.token)
+      setAuth(data.data.user) // No token parameter needed for cookie-based auth
       toast({
         title: 'Registration successful',
         status: 'success',

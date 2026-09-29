@@ -1,4 +1,4 @@
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom'
 import { Box, Container, Flex, Button, HStack, Badge, IconButton, Link, Text, Heading } from '@chakra-ui/react'
 import { FiShoppingCart, FiUser, FiLogOut } from 'react-icons/fi'
 import { useAuthStore } from '../store/authStore'
@@ -7,6 +7,24 @@ import { useCartStore } from '../store/cartStore'
 export default function Header() {
   const { isAuthenticated, user, logout, isAdmin } = useAuthStore()
   const totalItems = useCartStore((state) => state.totalItems)
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  const handleNavClick = (sectionId: string) => (e: React.MouseEvent) => {
+    e.preventDefault()
+    
+    // If not on homepage, navigate to homepage with hash
+    if (location.pathname !== '/') {
+      navigate(`/#${sectionId}`)
+      // Wait for navigation to complete, then scroll
+      setTimeout(() => {
+        document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' })
+      }, 100)
+    } else {
+      // If on homepage, just scroll
+      document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
 
   return (
     <Box 
@@ -20,9 +38,9 @@ export default function Header() {
       <Container maxW="7xl" py="3">
         <Flex alignItems="center" justifyContent="space-between">
           <Link 
-            as={RouterLink} 
-            to="/" 
+            href="/#home"
             _hover={{ textDecoration: 'none' }}
+            onClick={handleNavClick('home')}
           >
             <Box>
               <Heading 
@@ -62,6 +80,159 @@ export default function Header() {
               </Text>
             </Box>
           </Link>
+
+          <HStack spacing="6">
+            {/* Navigation Tabs */}
+            <Link 
+              href="/#home"
+              fontSize="md"
+              fontWeight="600"
+              color="gray.700"
+              position="relative"
+              _hover={{ 
+                color: '#6366f1',
+                textDecoration: 'none',
+              }}
+              sx={{
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: '-4px',
+                  left: 0,
+                  width: 0,
+                  height: '2px',
+                  background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                  transition: 'width 0.3s ease',
+                },
+                '&:hover::after': {
+                  width: '100%',
+                }
+              }}
+              onClick={handleNavClick('home')}
+            >
+              Home
+            </Link>
+
+            <Link 
+              href="/#about"
+              fontSize="md"
+              fontWeight="600"
+              color="gray.700"
+              position="relative"
+              _hover={{ 
+                color: '#6366f1',
+                textDecoration: 'none',
+              }}
+              sx={{
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: '-4px',
+                  left: 0,
+                  width: 0,
+                  height: '2px',
+                  background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                  transition: 'width 0.3s ease',
+                },
+                '&:hover::after': {
+                  width: '100%',
+                }
+              }}
+              onClick={handleNavClick('about')}
+            >
+              About
+            </Link>
+
+            <Link 
+              href="/#services"
+              fontSize="md"
+              fontWeight="600"
+              color="gray.700"
+              position="relative"
+              _hover={{ 
+                color: '#6366f1',
+                textDecoration: 'none',
+              }}
+              sx={{
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: '-4px',
+                  left: 0,
+                  width: 0,
+                  height: '2px',
+                  background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                  transition: 'width 0.3s ease',
+                },
+                '&:hover::after': {
+                  width: '100%',
+                }
+              }}
+              onClick={handleNavClick('services')}
+            >
+              Services
+            </Link>
+
+            <Link 
+              href="/#subscription"
+              fontSize="md"
+              fontWeight="600"
+              color="gray.700"
+              position="relative"
+              _hover={{ 
+                color: '#6366f1',
+                textDecoration: 'none',
+              }}
+              sx={{
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: '-4px',
+                  left: 0,
+                  width: 0,
+                  height: '2px',
+                  background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                  transition: 'width 0.3s ease',
+                },
+                '&:hover::after': {
+                  width: '100%',
+                }
+              }}
+              onClick={handleNavClick('subscription')}
+            >
+              Subscription
+            </Link>
+
+            <Link 
+              href="/#contact"
+              fontSize="md"
+              fontWeight="600"
+              color="gray.700"
+              position="relative"
+              _hover={{ 
+                color: '#6366f1',
+                textDecoration: 'none',
+              }}
+              sx={{
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: '-4px',
+                  left: 0,
+                  width: 0,
+                  height: '2px',
+                  background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                  transition: 'width 0.3s ease',
+                },
+                '&:hover::after': {
+                  width: '100%',
+                }
+              }}
+              onClick={handleNavClick('contact')}
+            >
+              Contact
+            </Link>
+          </HStack>
 
           <HStack spacing="4">
             <Link as={RouterLink} to="/products">

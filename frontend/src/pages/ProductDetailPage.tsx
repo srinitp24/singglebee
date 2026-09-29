@@ -21,10 +21,21 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   useToast,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  Divider,
+  Icon,
 } from '@chakra-ui/react'
+import { FaStar } from 'react-icons/fa'
 import { useState } from 'react'
 import { productService } from '../services/productService'
+import { reviewService } from '../services/reviewService'
 import { useCartStore } from '../store/cartStore'
+import RatingSummary from '../components/RatingSummary'
+import ReviewList from '../components/ReviewList'
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -36,6 +47,12 @@ export default function ProductDetailPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['product', id],
     queryFn: () => productService.getById(id!),
+    enabled: !!id,
+  })
+
+  const { data: reviewSummary } = useQuery({
+    queryKey: ['reviewSummary', id],
+    queryFn: () => reviewService.getProductReviewSummary(id!),
     enabled: !!id,
   })
 
@@ -131,9 +148,41 @@ export default function ProductDetailPage() {
               <Heading size="xl" mb="2">
                 {product.name}
               </Heading>
-              <Text fontSize="3xl" fontWeight="bold" color="purple.600">
-                ₹{product.price.toFixed(2)}
-              </Text>
+              
+              {/* Rating Display */}
+              <HStack spacing="1" mb="3">
+                <Icon as={FaStar} color={product.totalReviews > 0 ? "yellow.400" : "gray.300"} boxSize="18px" />
+                <Text fontSize="md" fontWeight="semibold">
+                  {product.rating.toFixed(1)}
+                </Text>
+                <Text fontSize="sm" color="gray.500">
+                  ({product.totalReviews} {product.totalReviews === 1 ? 'review' : 'reviews'})
+                </Text>
+              </HStack>
+              
+              {/* Price with discount */}
+              {product.discountPercentage > 0 && product.discountedPrice ? (
+                <VStack align="start" spacing="1">
+                  <HStack spacing="3" align="center">
+                    <Text fontSize="3xl" fontWeight="bold" color="purple.600">
+                      ₹{product.discountedPrice.toFixed(2)}
+                    </Text>
+                    <Badge colorScheme="red" fontSize="md" px="3" py="1">
+                      {product.discountPercentage}% OFF
+                    </Badge>
+                  </HStack>
+                  <Text fontSize="xl" color="gray.500" textDecoration="line-through">
+                    ₹{product.price.toFixed(2)}
+                  </Text>
+                  <Text fontSize="sm" color="green.600" fontWeight="semibold">
+                    You save ₹{(product.price - product.discountedPrice).toFixed(2)}
+                  </Text>
+                </VStack>
+              ) : (
+                <Text fontSize="3xl" fontWeight="bold" color="purple.600">
+                  ₹{product.price.toFixed(2)}
+                </Text>
+              )}
             </Box>
 
             <Box>
@@ -202,6 +251,69 @@ export default function ProductDetailPage() {
           </VStack>
         </GridItem>
       </Grid>
+
+      <Divider my="8" />
+
+      <Tabs colorScheme="purple">
+        <TabList>
+          <Tab>Product Details</Tab>
+          <Tab>Reviews ({reviewSummary?.data?.totalReviews || 0})</Tab>
+        </TabList>
+
+        <TabPanels>
+          <TabPanel>
+            <Box py="4">
+              <Heading size="md" mb="4">Product Information</Heading>
+              <Text color="gray.600" whiteSpace="pre-line">
+                {product.description || 'No detailed description available'}
+              </Text>
+              <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap="4" mt="6">
+                <Box>
+                  <Text fontWeight="semibold" color="gray.600">Category</Text>
+                  <Text>{product.category}</Text>
+                </Box>
+                <Box>
+                  <Text fontWeight="semibold" color="gray.600">Language</Text>
+                  <Text textTransform="capitalize">{product.language}</Text>
+                </Box>
+                <Box>
+                  <Text fontWeight="semibold" color="gray.600">Age Group</Text>
+                  <Text>{product.ageGroup}</Text>
+                </Box>
+                <Box>
+                  <Text fontWeight="semibold" color="gray.600">SKU</Text>
+                  <Text>{product.sku}</Text>
+                </Box>
+              </Grid>
+            </Box>
+          </TabPanel>
+
+          <TabPanel>
+            <VStack align="stretch" spacing="6" py="4">
+              {reviewSummary?.data ? (
+                reviewSummary.data.totalReviews > 0 ? (
+                  <>
+                    <RatingSummary summary={reviewSummary.data} />
+                    <Divider />
+                    <ReviewList productId={product.id} />
+                  </>
+                ) : (
+                  <Box textAlign="center" py="12">
+                    <Text fontSize="lg" color="gray.500">No reviews yet</Text>
+                    <Text fontSize="sm" color="gray.400" mt="2">
+                      Be the first to review this product after your purchase!
+                    </Text>
+                  </Box>
+                )
+              ) : (
+                <Box textAlign="center" py="12">
+                  <Text fontSize="lg" color="gray.500">Loading reviews...</Text>
+                </Box>
+              )}
+            </VStack>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
     </Container>
   )
 }

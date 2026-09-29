@@ -6,6 +6,7 @@ namespace SingglebeeApi.Services
     {
         Task<(bool success, AuthResponseDto? response, string? error)> RegisterAsync(RegisterDto registerDto);
         Task<(bool success, AuthResponseDto? response, string? error)> LoginAsync(LoginDto loginDto);
+        Task<(bool success, AuthResponseDto? response, string? error)> OtpLoginAsync(OtpLoginDto otpLoginDto);
         Task<(bool success, string? error)> ForgotPasswordAsync(ForgotPasswordDto forgotPasswordDto);
         Task<(bool success, string? error)> ResetPasswordAsync(ResetPasswordDto resetPasswordDto);
     }

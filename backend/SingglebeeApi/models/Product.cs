@@ -26,6 +26,9 @@ namespace SingglebeeApi.Models
         [MaxLength(3)]
         public string Currency { get; set; } = "INR";
 
+        [Range(0, 100)]
+        public int DiscountPercentage { get; set; } = 0; // Discount percentage (0-100)
+
         public int Stock { get; set; } = 0;
 
         [MaxLength(100)]

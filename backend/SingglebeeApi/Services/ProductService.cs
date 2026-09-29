@@ -73,12 +73,17 @@ namespace SingglebeeApi.Services
                         Price = p.PriceCents / 100m,
                         PriceCents = p.PriceCents,
                         Currency = p.Currency,
+                        DiscountPercentage = p.DiscountPercentage,
+                        DiscountedPrice = p.DiscountPercentage > 0 
+                            ? (p.PriceCents / 100m) * (1 - p.DiscountPercentage / 100m)
+                            : null,
                         Stock = p.Stock,
                         Category = p.Category,
                         AgeGroup = p.AgeGroup,
                         Language = p.Language,
                         ImageUrl = p.ImageUrl,
                         Rating = p.Rating,
+                        TotalReviews = _context.ProductReviews.Count(r => r.ProductId == p.Id),
                         IsActive = p.IsActive,
                         CreatedAt = p.CreatedAt,
                         UpdatedAt = p.UpdatedAt
@@ -105,6 +110,8 @@ namespace SingglebeeApi.Services
                     return (false, null, "Product not found");
                 }
 
+                var totalReviews = await _context.ProductReviews.CountAsync(r => r.ProductId == id);
+
                 var productDto = new ProductDto
                 {
                     Id = product.Id,
@@ -114,12 +121,17 @@ namespace SingglebeeApi.Services
                     Price = product.PriceCents / 100m,
                     PriceCents = product.PriceCents,
                     Currency = product.Currency,
+                    DiscountPercentage = product.DiscountPercentage,
+                    DiscountedPrice = product.DiscountPercentage > 0 
+                        ? (product.PriceCents / 100m) * (1 - product.DiscountPercentage / 100m)
+                        : null,
                     Stock = product.Stock,
                     Category = product.Category,
                     AgeGroup = product.AgeGroup,
                     Language = product.Language,
                     ImageUrl = product.ImageUrl,
                     Rating = product.Rating,
+                    TotalReviews = totalReviews,
                     IsActive = product.IsActive,
                     CreatedAt = product.CreatedAt,
                     UpdatedAt = product.UpdatedAt
@@ -145,6 +157,8 @@ namespace SingglebeeApi.Services
                     return (false, null, "Product not found");
                 }
 
+                var totalReviews = await _context.ProductReviews.CountAsync(r => r.ProductId == product.Id);
+
                 var productDto = new ProductDto
                 {
                     Id = product.Id,
@@ -154,12 +168,17 @@ namespace SingglebeeApi.Services
                     Price = product.PriceCents / 100m,
                     PriceCents = product.PriceCents,
                     Currency = product.Currency,
+                    DiscountPercentage = product.DiscountPercentage,
+                    DiscountedPrice = product.DiscountPercentage > 0 
+                        ? (product.PriceCents / 100m) * (1 - product.DiscountPercentage / 100m)
+                        : null,
                     Stock = product.Stock,
                     Category = product.Category,
                     AgeGroup = product.AgeGroup,
                     Language = product.Language,
                     ImageUrl = product.ImageUrl,
                     Rating = product.Rating,
+                    TotalReviews = totalReviews,
                     IsActive = product.IsActive,
                     CreatedAt = product.CreatedAt,
                     UpdatedAt = product.UpdatedAt
@@ -193,6 +212,7 @@ namespace SingglebeeApi.Services
                     Description = createProductDto.Description,
                     PriceCents = (int)(createProductDto.Price * 100), // Convert to cents
                     Currency = createProductDto.Currency,
+                    DiscountPercentage = createProductDto.DiscountPercentage,
                     Stock = createProductDto.Stock,
                     Category = createProductDto.Category,
                     AgeGroup = createProductDto.AgeGroup,
@@ -216,12 +236,17 @@ namespace SingglebeeApi.Services
                     Price = product.PriceCents / 100m,
                     PriceCents = product.PriceCents,
                     Currency = product.Currency,
+                    DiscountPercentage = product.DiscountPercentage,
+                    DiscountedPrice = product.DiscountPercentage > 0 
+                        ? (product.PriceCents / 100m) * (1 - product.DiscountPercentage / 100m)
+                        : null,
                     Stock = product.Stock,
                     Category = product.Category,
                     AgeGroup = product.AgeGroup,
                     Language = product.Language,
                     ImageUrl = product.ImageUrl,
                     Rating = product.Rating,
+                    TotalReviews = 0,
                     IsActive = product.IsActive,
                     CreatedAt = product.CreatedAt,
                     UpdatedAt = product.UpdatedAt
@@ -257,6 +282,9 @@ namespace SingglebeeApi.Services
                 if (updateProductDto.Price.HasValue)
                     product.PriceCents = (int)(updateProductDto.Price.Value * 100);
 
+                if (updateProductDto.DiscountPercentage.HasValue)
+                    product.DiscountPercentage = updateProductDto.DiscountPercentage.Value;
+
                 if (updateProductDto.Stock.HasValue)
                     product.Stock = updateProductDto.Stock.Value;
 
@@ -282,6 +310,8 @@ namespace SingglebeeApi.Services
 
                 await _context.SaveChangesAsync();
 
+                var totalReviews = await _context.ProductReviews.CountAsync(r => r.ProductId == product.Id);
+
                 var productDto = new ProductDto
                 {
                     Id = product.Id,
@@ -291,12 +321,17 @@ namespace SingglebeeApi.Services
                     Price = product.PriceCents / 100m,
                     PriceCents = product.PriceCents,
                     Currency = product.Currency,
+                    DiscountPercentage = product.DiscountPercentage,
+                    DiscountedPrice = product.DiscountPercentage > 0 
+                        ? (product.PriceCents / 100m) * (1 - product.DiscountPercentage / 100m)
+                        : null,
                     Stock = product.Stock,
                     Category = product.Category,
                     AgeGroup = product.AgeGroup,
                     Language = product.Language,
                     ImageUrl = product.ImageUrl,
                     Rating = product.Rating,
+                    TotalReviews = totalReviews,
                     IsActive = product.IsActive,
                     CreatedAt = product.CreatedAt,
                     UpdatedAt = product.UpdatedAt

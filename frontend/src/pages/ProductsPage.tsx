@@ -21,9 +21,11 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   useToast,
+  Icon,
 } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router-dom'
 import { FiShoppingCart } from 'react-icons/fi'
+import { FaStar } from 'react-icons/fa'
 import { productService } from '../services/productService'
 import { useCartStore } from '../store/cartStore'
 
@@ -190,9 +192,34 @@ export default function ProductsPage() {
                       {product.name}
                     </Heading>
                   </RouterLink>
-                  <Text fontSize="xl" fontWeight="bold" color="purple.600">
-                    ₹{product.price.toFixed(2)}
-                  </Text>
+                  
+                  {/* Rating Display */}
+                  <HStack spacing="1" fontSize="sm">
+                    <Icon as={FaStar} color={product.totalReviews > 0 ? "yellow.400" : "gray.300"} />
+                    <Text fontWeight="semibold">{product.rating.toFixed(1)}</Text>
+                    <Text color="gray.500">({product.totalReviews} {product.totalReviews === 1 ? 'review' : 'reviews'})</Text>
+                  </HStack>
+                  
+                  {/* Price with discount */}
+                  <Box>
+                    {product.discountPercentage > 0 && product.discountedPrice ? (
+                      <HStack spacing="2" align="center">
+                        <Text fontSize="xl" fontWeight="bold" color="purple.600">
+                          ₹{product.discountedPrice.toFixed(2)}
+                        </Text>
+                        <Text fontSize="sm" color="gray.500" textDecoration="line-through">
+                          ₹{product.price.toFixed(2)}
+                        </Text>
+                        <Badge colorScheme="red" fontSize="xs">
+                          {product.discountPercentage}% OFF
+                        </Badge>
+                      </HStack>
+                    ) : (
+                      <Text fontSize="xl" fontWeight="bold" color="purple.600">
+                        ₹{product.price.toFixed(2)}
+                      </Text>
+                    )}
+                  </Box>
                   
                   {/* Quantity Selector */}
                   <HStack spacing="2">

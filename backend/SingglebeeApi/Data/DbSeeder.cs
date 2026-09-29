@@ -54,7 +54,7 @@ namespace SingglebeeApi.Data
                     AgeGroup = "5-7",
                     Language = "English",
                     ImageUrl = "/images/products/butterfly-garden.jpg",
-                    Rating = 4.5m,
+                    Rating = 0.0m,
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
@@ -72,7 +72,7 @@ namespace SingglebeeApi.Data
                     AgeGroup = "8-10",
                     Language = "English",
                     ImageUrl = "/images/products/solar-system.jpg",
-                    Rating = 4.8m,
+                    Rating = 0.0m,
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
@@ -90,7 +90,7 @@ namespace SingglebeeApi.Data
                     AgeGroup = "3-5",
                     Language = "Hindi",
                     ImageUrl = "/images/products/hindi-cards.jpg",
-                    Rating = 4.3m,
+                    Rating = 0.0m,
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
@@ -108,7 +108,7 @@ namespace SingglebeeApi.Data
                     AgeGroup = "8-10",
                     Language = "English",
                     ImageUrl = "/images/products/math-game.jpg",
-                    Rating = 4.6m,
+                    Rating = 0.0m,
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
@@ -126,7 +126,7 @@ namespace SingglebeeApi.Data
                     AgeGroup = "5-7",
                     Language = "English",
                     ImageUrl = "/images/products/first-science.jpg",
-                    Rating = 4.4m,
+                    Rating = 0.0m,
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
@@ -144,7 +144,7 @@ namespace SingglebeeApi.Data
                     AgeGroup = "3-5",
                     Language = "Telugu",
                     ImageUrl = "/images/products/telugu-stories.jpg",
-                    Rating = 4.7m,
+                    Rating = 0.0m,
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
@@ -162,7 +162,7 @@ namespace SingglebeeApi.Data
                     AgeGroup = "5-7",
                     Language = "English",
                     ImageUrl = "/images/products/art-box.jpg",
-                    Rating = 4.9m,
+                    Rating = 0.0m,
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
@@ -180,7 +180,7 @@ namespace SingglebeeApi.Data
                     AgeGroup = "8-10",
                     Language = "English",
                     ImageUrl = "/images/products/coding-robot.jpg",
-                    Rating = 4.8m,
+                    Rating = 0.0m,
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow

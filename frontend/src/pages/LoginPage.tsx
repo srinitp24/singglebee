@@ -32,7 +32,7 @@ export default function LoginPage() {
   const loginMutation = useMutation({
     mutationFn: authService.login,
     onSuccess: async (data) => {
-      setAuth(data.data.user, data.data.token)
+      setAuth(data.data.user) // No token parameter needed for cookie-based auth
       
       // Clear any cached orders from previous user
       queryClient.clear()
@@ -109,6 +109,13 @@ export default function LoginPage() {
           >
             Login
           </Button>
+
+          <Text fontSize="sm">
+            or{' '}
+            <Link as={RouterLink} to="/login-otp" color="purple.500">
+              Login with OTP
+            </Link>
+          </Text>
 
           <Text fontSize="sm">
             Don't have an account?{' '}

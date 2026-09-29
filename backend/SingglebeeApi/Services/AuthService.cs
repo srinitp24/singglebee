@@ -9,15 +9,18 @@ namespace SingglebeeApi.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly ITokenService _tokenService;
+        private readonly IOtpService _otpService;
         private readonly ILogger<AuthService> _logger;
 
         public AuthService(
             ApplicationDbContext context,
             ITokenService tokenService,
+            IOtpService otpService,
             ILogger<AuthService> logger)
         {
             _context = context;
             _tokenService = tokenService;
+            _otpService = otpService;
             _logger = logger;
         }
 
@@ -141,6 +144,86 @@ namespace SingglebeeApi.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during user login");
+                return (false, null, "An error occurred during login");
+            }
+        }
+
+        public async Task<(bool success, AuthResponseDto? response, string? error)> OtpLoginAsync(OtpLoginDto otpLoginDto)
+        {
+            try
+            {
+                // Verify OTP first
+                var (otpSuccess, userId, otpError) = await _otpService.VerifyOtpAsync(
+                    otpLoginDto.PhoneNumber, 
+                    otpLoginDto.OtpCode, 
+                    "login");
+
+                if (!otpSuccess)
+                {
+                    return (false, null, otpError);
+                }
+
+                // Find user by phone number (handle both formats: with/without country code)
+                var phoneDigits = new string(otpLoginDto.PhoneNumber.Where(char.IsDigit).ToArray());
+                
+                // Try exact match first
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Phone == otpLoginDto.PhoneNumber);
+                
+                // If not found, try matching by last 10 digits
+                if (user == null && phoneDigits.Length >= 10)
+                {
+                    var last10Digits = phoneDigits.Substring(phoneDigits.Length - 10);
+                    user = await _context.Users
+                        .Where(u => u.Phone != null && u.Phone.Contains(last10Digits))
+                        .FirstOrDefaultAsync();
+                }
+
+                if (user == null)
+                {
+                    return (false, null, "User not found");
+                }
+
+                // Check if user is active
+                if (!user.IsActive)
+                {
+                    return (false, null, "Account is deactivated. Please contact support.");
+                }
+
+                // Mark phone as verified
+                if (!user.PhoneVerified)
+                {
+                    user.PhoneVerified = true;
+                    user.UpdatedAt = DateTime.UtcNow;
+                    await _context.SaveChangesAsync();
+                }
+
+                // Generate tokens
+                var accessToken = _tokenService.GenerateAccessToken(user.Id, user.Email, user.Role);
+                var refreshToken = _tokenService.GenerateRefreshToken();
+
+                var response = new AuthResponseDto
+                {
+                    Token = accessToken,
+                    RefreshToken = refreshToken,
+                    ExpiresAt = DateTime.UtcNow.AddMinutes(60),
+                    User = new UserDto
+                    {
+                        Id = user.Id,
+                        Name = user.Name,
+                        Email = user.Email,
+                        Role = user.Role,
+                        Phone = user.Phone,
+                        EmailVerified = user.EmailVerified
+                    }
+                };
+
+                _logger.LogInformation("User logged in successfully via OTP: {Phone}", user.Phone);
+                return (true, response, null);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during OTP login");
                 return (false, null, "An error occurred during login");
             }
         }
